@@ -2,8 +2,8 @@
 int clockPinBase = 2;
 int dataPinBase = 3;
 
-int latchPinArrow = 5;
-int clockPinArrow = 6;
+int latchPinArrow = 6;
+int clockPinArrow = 5;
 int dataPinArrow = 4;
 
 void setup()
@@ -18,22 +18,28 @@ void setup()
 	digitalWrite(latchPinArrow, LOW);
 	for (int i = 0; i < 8; i++)
 	{
-		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0b00000000);
+		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0);
 	}
-	shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0b00000001);
 	digitalWrite(latchPinArrow, HIGH);
 }
 
 void loop()
 {
+	digitalWrite(latchPinArrow, HIGH);
+	shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0x01);
+	digitalWrite(latchPinArrow, LOW);
+	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x01);
 	for (int i = 0; i < 8; i++)
 	{
-		shiftOut(dataPinBase, clockPinBase, LSBFIRST, 1 << i);
+		digitalWrite(latchPinArrow, LOW);
+		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0x00);
+		digitalWrite(latchPinArrow, LOW);
 		delay(1000);
 	}
-	for (int i = 0; i < 8; i++)
+	digitalWrite(latchPinArrow, LOW);
+	for (int i = 0; i < 8 ; i++)
 	{
-		shiftOut(dataPinBase, clockPinBase, LSBFIRST, 0);
+		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0);
 	}
-	delay(5000);
+	digitalWrite(latchPinArrow, HIGH);
 }
