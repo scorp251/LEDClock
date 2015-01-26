@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LEDClock.ino" />
+    <None Include="RTC.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.LEDClock.vsarduino.h">

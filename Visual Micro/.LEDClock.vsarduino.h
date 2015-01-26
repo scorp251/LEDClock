@@ -41,8 +41,13 @@ extern "C" void __cxa_pure_virtual() {;}
 
 //
 //
+void setDateTime();
+byte decToBcd(byte val);
+byte bcdToDec(byte val);
+void printDate();
 
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino\arduino.h"
 #include "C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard\pins_arduino.h" 
 #include "D:\prj\Arduino-Sketches\LEDClock\LEDClock.ino"
+#include "D:\prj\Arduino-Sketches\LEDClock\RTC.ino"
 #endif
