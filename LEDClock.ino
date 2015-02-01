@@ -18,8 +18,6 @@ void setup()
 	pinMode(clockPinBase, OUTPUT);
 	pinMode(dataPinBase, OUTPUT);
 
-	clearArrows();
-
 	pinMode(latchPinArrow, OUTPUT);
 	pinMode(clockPinArrow, OUTPUT);
 	pinMode(dataPinArrow, OUTPUT);
@@ -27,7 +25,7 @@ void setup()
 	clearArrows();
 	clearRegs();
 
-	//Serial.begin(9600);
+	Serial.begin(9600);
 	//Serial.println(F("DS1302 Real Time Clock"));
 	//Serial.println(F("Version 2, March 2013"));
 
@@ -49,7 +47,8 @@ void loop()
 	uint8_t cHour = bcd2bin(rtc.h24.Hour10, rtc.h24.Hour);
 	uint8_t cMin = bcd2bin(rtc.Minutes10, rtc.Minutes);
 	uint8_t cSec = bcd2bin(rtc.Seconds10, rtc.Seconds);
-
+	
+	clearRegs();
 	for (int i = 0; i < 6; i++)
 	{
 		regs[i] &= 1 << cHour;
@@ -65,11 +64,7 @@ void loop()
 		regs[i] &= 1 << cSec;
 	}
 
-	/*
 	char buffer[80];     // the code uses 70 characters.
-
-	// Read all clock data at once (burst mode).
-	DS1302_clock_burst_read((uint8_t *)&rtc);
 
 	sprintf(buffer, "Time = %02d:%02d:%02d, ", \
 		bcd2bin(rtc.h24.Hour10, rtc.h24.Hour), \
@@ -84,7 +79,7 @@ void loop()
 		rtc.Day, \
 		2000 + bcd2bin(rtc.Year10, rtc.Year));
 	Serial.println(buffer);
-	*/
+
 	displayAll();
 }
 
@@ -112,8 +107,18 @@ void displayAll()
 	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
 	clearArrows();
 
-	for (int i = 7; i <= 0; i--)
+	for (int i = 7; i >= 0; i--)
 	{
+		digitalWrite(latchPinArrow, LOW);
 
+		shiftOut(dataPinBase, clockPinBase, MSBFIRST, 1 << i);
+		shiftOut(dataPinBase, clockPinBase, MSBFIRST, 1 << i);
+
+		uint8_t reg = regs[i] >> i * 8;
+		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, reg);
+
+		digitalWrite(latchPinArrow, HIGH);
+		
+		delay(100);
 	}
 }
