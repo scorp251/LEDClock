@@ -41,6 +41,7 @@ extern "C" void __cxa_pure_virtual() {;}
 
 //
 //
+void clearArrows();
 void setDateTime();
 byte decToBcd(byte val);
 byte bcdToDec(byte val);

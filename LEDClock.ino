@@ -11,7 +11,7 @@ void setup()
 	pinMode(clockPinBase, OUTPUT);
 	pinMode(dataPinBase, OUTPUT);
 
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
+	clearArrows();
 
 	pinMode(latchPinArrow, OUTPUT);
 	pinMode(clockPinArrow, OUTPUT);
@@ -38,14 +38,14 @@ void loop()
 	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
 	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
 
+	clearArrows();
+	
 	digitalWrite(latchPinArrow, LOW);
 	for (int i = 7; i >= 0; i--)
 	{
 		uint8_t reg = globalArrow >> i * 8;
 		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, reg);
-		Serial.println(reg);
 	}
-	Serial.println("---");
 	digitalWrite(latchPinArrow, HIGH);
 
 	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0xff);
@@ -62,5 +62,15 @@ void loop()
 		globalArrow = 1;
 	}
 
-	delay(200);
+	delay(50);
+}
+
+void clearArrows()
+{
+	digitalWrite(latchPinArrow, LOW);
+	for (int i = 0; i < 8; i++)
+	{
+		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0x00);
+	}
+	digitalWrite(latchPinArrow, HIGH);
 }
