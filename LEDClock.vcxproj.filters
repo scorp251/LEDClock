@@ -16,11 +16,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="LEDClock.ino" />
-    <None Include="RTC.ino" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Visual Micro\.LEDClock.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RTC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="RTC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
