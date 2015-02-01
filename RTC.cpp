@@ -22,7 +22,7 @@ void DS1302_clock_burst_read(uint8_t *p)
 	// the I/O-line is released for the data
 	_DS1302_togglewrite(DS1302_CLOCK_BURST_READ, true);
 
-	for (i = 0; i<8; i++)
+	for (i = 0; i < 8; i++)
 	{
 		*p++ = _DS1302_toggleread();
 	}
@@ -49,7 +49,7 @@ void DS1302_clock_burst_write(uint8_t *p)
 	// the I/O-line is not released
 	_DS1302_togglewrite(DS1302_CLOCK_BURST_WRITE, false);
 
-	for (i = 0; i<8; i++)
+	for (i = 0; i < 8; i++)
 	{
 		// the I/O-line is not released
 		_DS1302_togglewrite(*p++, false);

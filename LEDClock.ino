@@ -7,6 +7,12 @@ int latchPinArrow = 6;
 int clockPinArrow = 5;
 int dataPinArrow = 4;
 
+int cHour;
+int cMin;
+int cSec;
+
+uint64_t regs[8];
+
 void setup()
 {
 	pinMode(clockPinBase, OUTPUT);
@@ -18,19 +24,12 @@ void setup()
 	pinMode(clockPinArrow, OUTPUT);
 	pinMode(dataPinArrow, OUTPUT);
 
-	digitalWrite(latchPinArrow, LOW);
-	for (int j = 0; j < 8; j++)
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0 << i);
-		}
-	}
-	digitalWrite(latchPinArrow, HIGH);
+	clearArrows();
+	clearRegs();
 
-	Serial.begin(9600);
-	Serial.println(F("DS1302 Real Time Clock"));
-	Serial.println(F("Version 2, March 2013"));
+	//Serial.begin(9600);
+	//Serial.println(F("DS1302 Real Time Clock"));
+	//Serial.println(F("Version 2, March 2013"));
 
 
 	// Start by clearing the Write Protect bit
@@ -43,50 +42,30 @@ void setup()
 	DS1302_write(DS1302_TRICKLE, 0x00);
 }
 
-uint8_t globalBase = 0;
-uint64_t globalArrow = 1;
-
 void loop()
 {
 	ds1302_struct rtc;
-	// Read all clock data at once (burst mode).
 	DS1302_clock_burst_read((uint8_t *)&rtc);
+	uint8_t cHour = bcd2bin(rtc.h24.Hour10, rtc.h24.Hour);
+	uint8_t cMin = bcd2bin(rtc.Minutes10, rtc.Minutes);
+	uint8_t cSec = bcd2bin(rtc.Seconds10, rtc.Seconds);
 
-	int cHour = bcd2bin(rtc.h24.Hour10, rtc.h24.Hour);
-	int cMin = bcd2bin(rtc.Minutes10, rtc.Minutes);
-	int cdigit1 = cHour / 10;
-	int cdigit2 = cHour - (cdigit1 * 10);
-	int cdigit3 = cMin / 10;
-	int cdigit4 = cMin - (cdigit3 * 10);
-	int digiStatus1[4] = { cdigit1, cdigit2, cdigit3, cdigit4 };
-
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
-
-	clearArrows();
-	
-	digitalWrite(latchPinArrow, LOW);
-	for (int i = 7; i >= 0; i--)
+	for (int i = 0; i < 6; i++)
 	{
-		uint8_t reg = globalArrow >> i * 8;
-		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, reg);
-	}
-	digitalWrite(latchPinArrow, HIGH);
-
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0xff);
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0xff);
-
-	if (globalBase++ == 7)
-	{
-		globalBase = 0;
+		regs[i] &= 1 << cHour;
 	}
 
-	globalArrow *= 2;
-	if ((globalArrow >> 56) == 8)
+	for (int i = 0; i < 7; i++)
 	{
-		globalArrow = 1;
+		regs[i] &= 1 << cMin;
 	}
 
+	for (int i = 0; i < 8; i++)
+	{
+		regs[i] &= 1 << cSec;
+	}
+
+	/*
 	char buffer[80];     // the code uses 70 characters.
 
 	// Read all clock data at once (burst mode).
@@ -105,8 +84,8 @@ void loop()
 		rtc.Day, \
 		2000 + bcd2bin(rtc.Year10, rtc.Year));
 	Serial.println(buffer);
-
-	delay(300);
+	*/
+	displayAll();
 }
 
 void clearArrows()
@@ -117,4 +96,24 @@ void clearArrows()
 		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0x00);
 	}
 	digitalWrite(latchPinArrow, HIGH);
+}
+
+void clearRegs()
+{
+	for (int i = 0; i < 8; i++)
+	{
+		regs[i] = 0;
+	}
+}
+
+void displayAll()
+{
+	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
+	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
+	clearArrows();
+
+	for (int i = 7; i <= 0; i--)
+	{
+
+	}
 }
