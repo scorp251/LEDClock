@@ -27,9 +27,6 @@ void setup()
 	}
 	digitalWrite(latchPinArrow, HIGH);
 
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0xff);
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0xff);
-
 	Serial.begin(9600);
 }
 
@@ -38,19 +35,21 @@ uint64_t globalArrow = 1;
 
 void loop()
 {
+	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
+	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
 
 	digitalWrite(latchPinArrow, LOW);
-	for (int i = 0; i < 8; i++)
+	for (int i = 7; i >= 0; i--)
 	{
 		uint8_t reg = globalArrow >> i * 8;
-		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0xff);
+		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, reg);
 		Serial.println(reg);
 	}
 	Serial.println("---");
 	digitalWrite(latchPinArrow, HIGH);
 
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 1 << globalBase);
-	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 1 << globalBase);
+	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0xff);
+	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0xff);
 
 	if (globalBase++ == 7)
 	{
