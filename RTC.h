@@ -137,6 +137,7 @@ void _DS1302_start(void);
 void _DS1302_stop(void);
 uint8_t _DS1302_toggleread(void);
 void _DS1302_togglewrite(uint8_t data, uint8_t release);
+void setDateTime();
 
 
 #endif
