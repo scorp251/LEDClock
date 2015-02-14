@@ -31,7 +31,7 @@ void setup()
 
 	//setDateTime();
 
-//	Serial.begin(9600);
+	//Serial.begin(9600);
 	//Serial.println(F("DS1302 Real Time Clock"));
 	//Serial.println(F("Version 2, March 2013"));
 
@@ -50,26 +50,28 @@ void loop()
 {
 	ds1302_struct rtc;
 	DS1302_clock_burst_read((uint8_t *)&rtc);
-	delay(1);
+
 	cHour = bcd2bin(rtc.h24.Hour10, rtc.h24.Hour);
 	cMin = bcd2bin(rtc.Minutes10, rtc.Minutes);
 	cSec = bcd2bin(rtc.Seconds10, rtc.Seconds);
 	uint8_t shiftHour = (uint8_t) cMin / 15;
 	uint8_t regNum;
 
-	if (cSec == 0){
-		cMills = millis();
-	}
+	cMills = (millis() % 1000) >> 4;
 	
 	clearRegs();
+
+	regNum = cMills >> 3;
+	regs[7][regNum] |= 1 << (cMills % 8);
+
 	for (int i = 0; i < 8; i++)
 	{
-		regNum = (uint8_t) cSec / 8;
-		regs[i][regNum] = 1 << (cSec % 8);
+		regNum = (uint8_t) cSec >> 3;
+		regs[i][regNum] |= 1 << (cSec % 8);
 	}
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 8; i++)
 	{
-		regNum = (uint8_t) cMin / 8;
+		regNum = (uint8_t) cMin >> 3;
 		regs[i][regNum] |= 1 << cMin % 8;
 	}
 	
@@ -77,11 +79,11 @@ void loop()
 	{
 		if (cHour > 12)
 		{
-			regNum = ((cHour - 12) * 5) / 8;
+			regNum = ((cHour - 12) * 5) >> 3;
 		}
 		else
 		{
-			regNum = (cHour * 5) / 8;
+			regNum = (cHour * 5) >> 3;
 		}
 		regs[i][regNum] |= 1 << shiftHour;
 	}
@@ -137,6 +139,12 @@ void displayAll()
 		digitalWrite(latchPinBase, LOW);
 		shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
 		digitalWrite(latchPinBase, HIGH);
+
+		// clearArrows();
+		digitalWrite(latchPinArrow, LOW);
+		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0x00);
+		digitalWrite(latchPinArrow, HIGH);
+
 		digitalWrite(latchPinArrow, LOW);
 		for (int j = 7; j >= 0; j--)
 		{
@@ -146,5 +154,9 @@ void displayAll()
 		digitalWrite(latchPinBase, LOW);
 		shiftOut(dataPinBase, clockPinBase, MSBFIRST, 1 << i);
 		digitalWrite(latchPinBase, HIGH);
+		delay(1);
 	}
+	digitalWrite(latchPinBase, LOW);
+	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
+	digitalWrite(latchPinBase, HIGH);
 }

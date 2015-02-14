@@ -239,10 +239,10 @@ void setDateTime()
 	// Example for april 15, 2013, 10:08, monday is 2nd day of Week.
 	// Set your own time and date in these variables.
 	seconds = 0;
-	minutes = 14;
-	hours = 20;
-	dayofweek = 5;  // Day of week, any day can be first, counts 1...7
-	dayofmonth = 13; // Day of month, 1...31
+	minutes = 36;
+	hours = 8;
+	dayofweek = 6;  // Day of week, any day can be first, counts 1...7
+	dayofmonth = 14; // Day of month, 1...31
 	month = 2;  // month 1...12
 	year = 2015;
 
