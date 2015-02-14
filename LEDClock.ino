@@ -66,11 +66,6 @@ void loop()
 
 	for (int i = 0; i < 8; i++)
 	{
-		regNum = (uint8_t) cSec >> 3;
-		regs[i][regNum] |= 1 << (cSec % 8);
-	}
-	for (int i = 0; i < 8; i++)
-	{
 		regNum = (uint8_t) cMin >> 3;
 		regs[i][regNum] |= 1 << cMin % 8;
 	}
@@ -87,6 +82,20 @@ void loop()
 		}
 		regs[i][regNum] |= 1 << shiftHour;
 	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		regNum = (uint8_t)cSec >> 3;
+		if (i % 2)
+		{
+			regs[i][regNum] |= 1 << (cSec % 8);
+		}
+		else
+		{
+			regs[i][regNum] ^= 1 << (cSec % 8);
+		}
+	}
+
 
 	//char buffer[80];     // the code uses 70 characters.
 	//
