@@ -64,12 +64,6 @@ void loop()
 	regNum = cMills >> 3;
 	regs[7][regNum] |= 1 << (cMills % 8);
 
-	for (int i = 0; i < 8; i++)
-	{
-		regNum = (uint8_t) cMin >> 3;
-		regs[i][regNum] |= 1 << cMin % 8;
-	}
-	
 	for (int i = 0; i < 6; i++)
 	{
 		if (cHour > 12)
@@ -81,6 +75,19 @@ void loop()
 			regNum = (cHour * 5) >> 3;
 		}
 		regs[i][regNum] |= 1 << shiftHour;
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		regNum = (uint8_t)cMin >> 3;
+		if (i % 2)
+		{
+			regs[i][regNum] |= 1 << cMin % 8;
+		}
+		else
+		{
+			regs[i][regNum] ^= 1 << cMin % 8;
+		}
 	}
 
 	for (int i = 0; i < 8; i++)
