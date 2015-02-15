@@ -54,7 +54,7 @@ void loop()
 	cHour = bcd2bin(rtc.h24.Hour10, rtc.h24.Hour);
 	cMin = bcd2bin(rtc.Minutes10, rtc.Minutes);
 	cSec = bcd2bin(rtc.Seconds10, rtc.Seconds);
-	uint8_t shiftHour = (uint8_t) cMin / 15;
+	uint8_t shiftHour = (uint8_t) cMin / 12;
 	uint8_t regNum;
 
 	cMills = (millis() % 1000) >> 4;
@@ -68,13 +68,10 @@ void loop()
 	{
 		if (cHour > 12)
 		{
-			regNum = ((cHour - 12) * 5) >> 3;
+			cHour -= 12;
 		}
-		else
-		{
-			regNum = (cHour * 5) >> 3;
-		}
-		regs[i][regNum] |= 1 << shiftHour;
+		regNum = (cHour * 5) + shiftHour >> 3;
+		regs[i][regNum] |= 1 << ((cHour * 5) + shiftHour) % 8;
 	}
 
 	for (int i = 0; i < 8; i++)
