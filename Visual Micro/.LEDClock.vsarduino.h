@@ -45,9 +45,9 @@ void clearArrows();
 void clearRegs();
 void displayAll();
 
-#include "C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino\arduino.h"
-#include "C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard\pins_arduino.h" 
-#include "D:\prj\Arduino-Sketches\LEDClock\LEDClock.ino"
-#include "D:\prj\Arduino-Sketches\LEDClock\RTC.cpp"
-#include "D:\prj\Arduino-Sketches\LEDClock\RTC.h"
+#include "D:\Arduino\hardware\arduino\cores\arduino\arduino.h"
+#include "D:\Arduino\hardware\arduino\variants\standard\pins_arduino.h" 
+#include "D:\Arduino-Sketches\git-sync\LEDClock\LEDClock.ino"
+#include "D:\Arduino-Sketches\git-sync\LEDClock\RTC.cpp"
+#include "D:\Arduino-Sketches\git-sync\LEDClock\RTC.h"
 #endif

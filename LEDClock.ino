@@ -66,7 +66,7 @@ void loop()
 
 	for (int i = 0; i < 6; i++)
 	{
-		if (cHour > 12)
+		if (cHour >= 12)
 		{
 			cHour -= 12;
 		}
@@ -87,17 +87,17 @@ void loop()
 		}
 	}
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		regNum = (uint8_t)cSec >> 3;
-		if (i % 2)
-		{
-			regs[i][regNum] |= 1 << (cSec % 8);
-		}
-		else
-		{
-			regs[i][regNum] ^= 1 << (cSec % 8);
-		}
+		regs[i][regNum] ^= 1 << (cSec % 8);
+	}
+
+	//dots for hour segments
+	for (int i = 0; i < 60; i += 5)
+	{
+		regNum = (uint8_t)i >> 3;
+		regs[0][regNum] |= 1 << i % 8;
 	}
 
 
