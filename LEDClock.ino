@@ -56,8 +56,15 @@ void loop()
 	cSec = bcd2bin(rtc.Seconds10, rtc.Seconds);
 	uint8_t shiftHour = (uint8_t) cMin / 12;
 	uint8_t regNum;
+	uint8_t cMillsSpeed;
 
-	cMills = (millis() % 1000) >> 4;
+	uint16_t cMillsMod = millis() % 1000;
+	cMillsSpeed = (cMillsMod % 10);
+	if (cMillsMod > 500)
+	{
+		cMillsSpeed = 10 - cMillsSpeed;
+	}
+	cMills = (cMillsMod + (cMillsSpeed << 1) ) >> 4;
 	
 	clearRegs();
 
