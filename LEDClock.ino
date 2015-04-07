@@ -160,21 +160,16 @@ void displayAll()
 		shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
 		digitalWrite(latchPinBase, HIGH);
 
-		// clearArrows();
-		digitalWrite(latchPinArrow, LOW);
-		shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, 0x00);
-		digitalWrite(latchPinArrow, HIGH);
-
 		digitalWrite(latchPinArrow, LOW);
 		for (int j = 7; j >= 0; j--)
 		{
 			shiftOut(dataPinArrow, clockPinArrow, MSBFIRST, regs[i][j]);
 		}
 		digitalWrite(latchPinArrow, HIGH);
+
 		digitalWrite(latchPinBase, LOW);
 		shiftOut(dataPinBase, clockPinBase, MSBFIRST, 1 << i);
 		digitalWrite(latchPinBase, HIGH);
-		delay(1);
 	}
 	digitalWrite(latchPinBase, LOW);
 	shiftOut(dataPinBase, clockPinBase, MSBFIRST, 0x00);
