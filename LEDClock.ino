@@ -14,7 +14,7 @@ uint8_t cSec;
 
 uint8_t regs[8][8];
 
-uint8_t cMills = 0;
+uint8_t cMillis = 0;
 
 void setup()
 {
@@ -46,6 +46,28 @@ void setup()
 	DS1302_write(DS1302_TRICKLE, 0x00);
 }
 
+void spinMillis()
+{
+	uint8_t regNum;
+	uint8_t cCount;
+	if (cMillis <= 30)
+	{
+		cCount = cMillis >> 1;
+	}
+	else
+	{
+		cCount = (62 - cMillis) >> 1;
+	}
+
+	for (uint8_t i = 0; i <= cCount; i++)
+	{
+		regNum = (cMillis + i) >> 3;
+		regs[7][regNum] |= 1 << ((cMillis + i) % 8);
+	}
+	//regNum = (cMillis + cCount) >> 3;
+	//regs[7][regNum] |= 1 << ((cMillis + cCount) % 8);
+}
+
 void loop()
 {
 	ds1302_struct rtc;
@@ -54,22 +76,15 @@ void loop()
 	cHour = bcd2bin(rtc.h24.Hour10, rtc.h24.Hour);
 	cMin = bcd2bin(rtc.Minutes10, rtc.Minutes);
 	cSec = bcd2bin(rtc.Seconds10, rtc.Seconds);
-	uint8_t shiftHour = (uint8_t) cMin / 12;
+	uint8_t shiftHour = (uint8_t)cMin / 12;
 	uint8_t regNum;
-	uint8_t cMillsSpeed;
 
-	uint16_t cMillsMod = millis() % 1000;
-	cMillsSpeed = (cMillsMod % 10);
-	if (cMillsMod > 500)
-	{
-		cMillsSpeed = 10 - cMillsSpeed;
-	}
-	cMills = (cMillsMod + (cMillsSpeed << 1) ) >> 4;
-	
 	clearRegs();
 
-	regNum = cMills >> 3;
-	regs[7][regNum] |= 1 << (cMills % 8);
+	cMillis = (millis() % 1000) >> 4;
+	spinMillis();
+	//regNum = cMills >> 3;
+	//regs[7][regNum] |= 1 << (cMills % 8);
 
 	for (int i = 0; i < 6; i++)
 	{
@@ -115,17 +130,17 @@ void loop()
 	//Serial.println(buffer);
 
 	//sprintf(buffer, "Time = %02d:%02d:%02d, ", \
-	//	bcd2bin(rtc.h24.Hour10, rtc.h24.Hour), \
-	//	bcd2bin(rtc.Minutes10, rtc.Minutes), \
-	//	bcd2bin(rtc.Seconds10, rtc.Seconds));
+			//	bcd2bin(rtc.h24.Hour10, rtc.h24.Hour), \
+			//	bcd2bin(rtc.Minutes10, rtc.Minutes), \
+			//	bcd2bin(rtc.Seconds10, rtc.Seconds));
 	//Serial.print(buffer);
 
 	//sprintf(buffer, "Date(day of month) = %d, Month = %d, " \
-	//	"Day(day of week) = %d, Year = %d", \
-	//	bcd2bin(rtc.Date10, rtc.Date), \
-	//	bcd2bin(rtc.Month10, rtc.Month), \
-	//	rtc.Day, \
-	//	2000 + bcd2bin(rtc.Year10, rtc.Year));
+			//	"Day(day of week) = %d, Year = %d", \
+			//	bcd2bin(rtc.Date10, rtc.Date), \
+			//	bcd2bin(rtc.Month10, rtc.Month), \
+			//	rtc.Day, \
+			//	2000 + bcd2bin(rtc.Year10, rtc.Year));
 	//Serial.println(buffer);
 
 	displayAll();
